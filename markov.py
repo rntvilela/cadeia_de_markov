@@ -1,8 +1,7 @@
-import numpy
-
+#Trabalho sobre Cadeia de Markov
 def calcPalavras(fname):
     "Calcula o numero de palavras em um arquivo de texto."
-    infile = open(fname, "r")
+    infile = open(fname, "r", encoding="iso-8859-1")
     p = 0
     
     for linha in infile:
@@ -13,7 +12,7 @@ def calcPalavras(fname):
 
 def calcStr(fname, str):
     "Calcula o numero de ocorrencia de uma String em um arquivo de texto."
-    infile = open(fname, "r")
+    infile = open(fname, "r", encoding="iso-8859-1")
     strCounter = 0
     
     for linha in infile:
@@ -29,7 +28,7 @@ def calcStr(fname, str):
 def calcProb(n, t):
     "Calcula probabilidade de ocorrencia de um item"
     
-    return round(n/t, 5)
+    return round(n/t, 6)
 
 def main():
     #fname = input ("Informe o nome do arquivo: " )
@@ -50,7 +49,7 @@ def main():
     P_CA = calcProb(CA, totalp)
     P_DA = calcProb(DA, totalp)
     
-    P_IND = numpy.matrix([[P_LO], [P_JA], [P_CA], [P_DA], [P_ESP]])
+    P_IND = [P_LO, P_JA, P_CA, P_DA, P_ESP]
     
     #Numero de transições de ESP
     ESPtoLO = calcStr(fname, " lo")
@@ -153,7 +152,7 @@ def main():
     P_DAtoN = [P_DAtoLO, P_DAtoJA, P_DAtoCA, P_DAtoDA, P_DAtoESP]
     
     #Matriz de probabilidades de transições de estados
-    P_MATRIZ = numpy.matrix([P_ESPtoN, P_LOtoN, P_JAtoN, P_CAtoN, P_DAtoN])
+    P_MATRIZ = [P_ESPtoN, P_LOtoN, P_JAtoN, P_CAtoN, P_DAtoN]
     
     print("\nProbabilidade das sílabas LO, JA, CA, DA e do ESPAÇO: \n", P_IND)
     print("\nMatriz de probabilidades de transições de estados: \n", P_MATRIZ)
