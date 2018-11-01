@@ -18,6 +18,7 @@ def calcStr(fname, str):
     
     for linha in infile:
         linha = linha.lower()
+        linha = linha.replace(',', '').replace('.', '').replace(';', '').replace(':', '').replace('?', '').replace('!', '').replace('-', '')
         linha = linha.replace('á', 'a').replace('à', 'a').replace('â', 'a').replace('ã', 'a')
         linha = linha.replace('ó', 'o').replace('ò', 'o').replace('ô', 'o').replace('õ', 'o')
         strCounter = strCounter + linha.count(str)
