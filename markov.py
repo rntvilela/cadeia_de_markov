@@ -1,3 +1,5 @@
+import numpy
+
 def calcPalavras(fname):
     "Calcula o numero de palavras em um arquivo de texto."
     infile = open(fname, "r")
@@ -9,87 +11,151 @@ def calcPalavras(fname):
     infile.close()
     return p
 
-def calcEsp(fname):
-    "Calcula o numero de espaços em um arquivo de texto."
+def calcStr(fname, str):
+    "Calcula o numero de ocorrencia de uma String em um arquivo de texto."
     infile = open(fname, "r")
-    esp = 0
-    
-    for linha in infile:
-        esp = esp + linha.count(" ")
-    
-    infile.close()
-    return esp
-
-def calcLO(fname):
-    "Calcula o numero da silaba LO presente em um arquivo de texto."
-    infile = open(fname, "r")
-    lo = 0
+    strCounter = 0
     
     for linha in infile:
         linha = linha.lower()
-        linha = linha.replace('á', 'a').replace('à', 'a').replace('ó', 'o').replace('ò', 'o')
-        lo = lo + linha.count("lo")
+        linha = linha.replace('á', 'a').replace('à', 'a').replace('â', 'a').replace('ã', 'a')
+        linha = linha.replace('ó', 'o').replace('ò', 'o').replace('ô', 'o').replace('õ', 'o')
+        strCounter = strCounter + linha.count(str)
     
     infile.close()
-    return lo
+    return strCounter
 
-def calcJA(fname):
-    "Calcula o numero da silaba JA presente em um arquivo de texto."
-    infile = open(fname, "r")
-    ja = 0
+def calcProb(n, t):
+    "Calcula probabilidade de ocorrencia de um item"
     
-    for linha in infile:
-        linha = linha.lower()
-        linha = linha.replace('á', 'a').replace('à', 'a').replace('ó', 'o').replace('ò', 'o')
-        ja = ja + linha.count("ja") 
-    
-    infile.close()
-    return ja
-
-def calcCA(fname):
-    "Calcula o numero da silaba CA presente em um arquivo de texto."
-    infile = open(fname, "r")
-    ca = 0
-    
-    for linha in infile:
-        linha = linha.lower()
-        linha = linha.replace('á', 'a').replace('à', 'a').replace('ó', 'o').replace('ò', 'o')
-        ca = ca + linha.count("ca")
-    
-    infile.close()
-    return ca
-
-def calcDA(fname):
-    "Calcula o numero da silaba DA presente em um arquivo de texto."
-    infile = open(fname, "r")
-    da = 0
-    
-    for linha in infile:
-        linha = linha.lower()
-        linha = linha.replace('á', 'a').replace('à', 'a').replace('ó', 'o').replace('ò', 'o')
-        da = da + linha.count("da")
-    
-    infile.close()
-    return da
+    return round(n/t, 5)
 
 def main():
     #fname = input ("Informe o nome do arquivo: " )
     fname = "teste.txt"
     
     palavras = calcPalavras(fname)
+    ESP = calcStr(fname, " ")
+    LO = calcStr(fname, "lo")
+    JA = calcStr(fname, "ja")
+    CA = calcStr(fname, "ca")
+    DA = calcStr(fname, "da")
     
-    ESP = calcEsp(fname)
+    totalp = palavras + ESP
     
-    LO = calcLO(fname)
+    P_ESP = calcProb(ESP, totalp)
+    P_LO = calcProb(LO, totalp)
+    P_JA = calcProb(JA, totalp)
+    P_CA = calcProb(CA, totalp)
+    P_DA = calcProb(DA, totalp)
     
-    JA = calcJA(fname)
+    P_IND = numpy.matrix([[P_LO], [P_JA], [P_CA], [P_DA], [P_ESP]])
     
-    CA = calcCA(fname)
+    #Numero de transições de ESP
+    ESPtoLO = calcStr(fname, " lo")
+    ESPtoJA = calcStr(fname, " ja")
+    ESPtoCA = calcStr(fname, " ca")
+    ESPtoDA = calcStr(fname, " da")
+    ESPtoESP = calcStr(fname, "  ")
     
-    DA = calcDA(fname)
+    #Total de transições de ESP
+    totalESPtoN = ESPtoLO + ESPtoJA + ESPtoCA + ESPtoDA + ESPtoESP 
     
-    print("O total de palavras é {0}, total de espaços é {1}, totalizando {2}.".format(palavras, ESP, (palavras+ESP)))
-    print("O total de LO é {0}, total de JA é {1}, total de CA é {2}, total de DA é {3}.".format(LO, JA, CA, DA))
+    #Probabilidades de transições de ESP
+    P_ESPtoLO = calcProb(ESPtoLO, totalESPtoN)
+    P_ESPtoJA = calcProb(ESPtoJA, totalESPtoN)
+    P_ESPtoCA = calcProb(ESPtoCA, totalESPtoN)
+    P_ESPtoDA = calcProb(ESPtoDA, totalESPtoN)
+    P_ESPtoESP = calcProb(ESPtoESP, totalESPtoN)
+    
+    #Primieira linha da matriz de probabilidades de transições de estados
+    P_ESPtoN = [P_ESPtoLO, P_ESPtoJA, P_ESPtoCA, P_ESPtoDA, P_ESPtoESP]
+    
+    #Numero de transições de LO
+    LOtoLO = calcStr(fname, "lolo")
+    LOtoJA = calcStr(fname, "loja")
+    LOtoCA = calcStr(fname, "loca")
+    LOtoDA = calcStr(fname, "loda")
+    LOtoESP = calcStr(fname, "lo ")
+    
+    #Total de transições de LO
+    totalLOtoN = LOtoLO + LOtoJA + LOtoCA + LOtoDA + LOtoESP
+    
+    #Probabilidades de transições de LO
+    P_LOtoLO = calcProb(LOtoLO, totalLOtoN)
+    P_LOtoJA = calcProb(LOtoJA, totalLOtoN)
+    P_LOtoCA = calcProb(LOtoCA, totalLOtoN)
+    P_LOtoDA = calcProb(LOtoDA, totalLOtoN)
+    P_LOtoESP = calcProb(LOtoESP, totalLOtoN)
+    
+    #Segunda linha da matriz de probabilidades de transições de estados
+    P_LOtoN = [P_LOtoLO, P_LOtoJA, P_LOtoCA, P_LOtoDA, P_LOtoESP]
+    
+    #Numero de transições de JA
+    JAtoLO = calcStr(fname, "jalo")
+    JAtoJA = calcStr(fname, "jaja")
+    JAtoCA = calcStr(fname, "jaca")
+    JAtoDA = calcStr(fname, "jada")
+    JAtoESP = calcStr(fname, "ja ")
+    
+    #Total de transições de JA
+    totalJAtoN = JAtoLO + JAtoJA + JAtoCA + JAtoDA + JAtoESP
+    
+    #Probabilidades de transições de JA
+    P_JAtoLO = calcProb(JAtoLO, totalJAtoN)
+    P_JAtoJA = calcProb(JAtoJA, totalJAtoN)
+    P_JAtoCA = calcProb(JAtoCA, totalJAtoN)
+    P_JAtoDA = calcProb(JAtoDA, totalJAtoN)
+    P_JAtoESP = calcProb(JAtoESP, totalJAtoN)
+    
+    #Terceira linha da matriz de probabilidades de transições de estados
+    P_JAtoN = [P_JAtoLO, P_JAtoJA, P_JAtoCA, P_JAtoDA, P_JAtoESP]
+    
+    #Numero de transições de CA
+    CAtoLO = calcStr(fname, "calo")
+    CAtoJA = calcStr(fname, "caja")
+    CAtoCA = calcStr(fname, "caca")
+    CAtoDA = calcStr(fname, "cada")
+    CAtoESP = calcStr(fname, "ca ")
+    
+    #Total de transições de CA
+    totalCAtoN = CAtoLO + CAtoJA + CAtoCA + CAtoDA + CAtoESP
+    
+    #Probabilidades de transições de CA
+    P_CAtoLO = calcProb(CAtoLO, totalCAtoN)
+    P_CAtoJA = calcProb(CAtoJA, totalCAtoN)
+    P_CAtoCA = calcProb(CAtoCA, totalCAtoN)
+    P_CAtoDA = calcProb(CAtoDA, totalCAtoN)
+    P_CAtoESP = calcProb(CAtoESP, totalCAtoN)
+    
+    #Quarta linha da matriz de probabilidades de transições de estados
+    P_CAtoN = [P_CAtoLO, P_CAtoJA, P_CAtoCA, P_CAtoDA, P_CAtoESP]
+    
+    #Numero de transições de DA
+    DAtoLO = calcStr(fname, "dalo")
+    DAtoJA = calcStr(fname, "daja")
+    DAtoCA = calcStr(fname, "daca")
+    DAtoDA = calcStr(fname, "dada")
+    DAtoESP = calcStr(fname, "da ")
+    
+    #Total de transições de DA
+    totalDAtoN = DAtoLO + DAtoJA + DAtoCA + DAtoDA + DAtoESP
+    
+    #Probabilidades de transições de DA
+    P_DAtoLO = calcProb(DAtoLO, totalDAtoN)
+    P_DAtoJA = calcProb(DAtoJA, totalDAtoN)
+    P_DAtoCA = calcProb(DAtoCA, totalDAtoN)
+    P_DAtoDA = calcProb(DAtoDA, totalDAtoN)
+    P_DAtoESP = calcProb(DAtoESP, totalDAtoN)
+    
+    #Quinta linha da matriz de probabilidades de transições de estados
+    P_DAtoN = [P_DAtoLO, P_DAtoJA, P_DAtoCA, P_DAtoDA, P_DAtoESP]
+    
+    #Matriz de probabilidades de transições de estados
+    P_MATRIZ = numpy.matrix([P_ESPtoN, P_LOtoN, P_JAtoN, P_CAtoN, P_DAtoN])
+    
+    print("\nProbabilidade das sílabas LO, JA, CA, DA e do ESPAÇO: \n", P_IND)
+    print("\nMatriz de probabilidades de transições de estados: \n", P_MATRIZ)
     
 if __name__=="__main__":
     main()
