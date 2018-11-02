@@ -1,4 +1,4 @@
-#Trabalho sobre Cadeia de Markov
+#Trabalho sobre cadeia de Markov
 def calcPalavras(fname):
     "Calcula o numero de palavras em um arquivo de texto."
     infile = open(fname, "r", encoding="iso-8859-1")
@@ -30,18 +30,29 @@ def calcProb(n, t):
     
     return round(n/t, 6)
 
-def main():
-    #fname = input ("Informe o nome do arquivo: " )
-    fname = "teste.txt"
+def writeList(list, fname, mode):
+    "Escreve os valores de uma lista em um arquivo de texto."
     
-    palavras = calcPalavras(fname)
+    strList = '\n'.join(str(e) for e in list)
+    f = open(fname, mode)
+    f.write('\n'+strList+'\n')
+    f.close()
+    
+    return 0
+
+def main():
+    #fname = input("Informe o nome do arquivo: " )
+    #fname = "teste.txt"
+    fname = "Policarpo.txt"
+    
+    #Estado inicial
     ESP = calcStr(fname, " ")
     LO = calcStr(fname, "lo")
     JA = calcStr(fname, "ja")
     CA = calcStr(fname, "ca")
     DA = calcStr(fname, "da")
     
-    totalp = palavras + ESP
+    totalp = ESP + LO + JA + CA + DA
     
     P_ESP = calcProb(ESP, totalp)
     P_LO = calcProb(LO, totalp)
@@ -49,8 +60,9 @@ def main():
     P_CA = calcProb(CA, totalp)
     P_DA = calcProb(DA, totalp)
     
-    P_IND = [P_LO, P_JA, P_CA, P_DA, P_ESP]
-    
+    #Probabilidade de estado inicial
+    P_INI = [P_LO, P_JA, P_CA, P_DA, P_ESP]
+        
     #Numero de transições de ESP
     ESPtoLO = calcStr(fname, " lo")
     ESPtoJA = calcStr(fname, " ja")
@@ -152,10 +164,15 @@ def main():
     P_DAtoN = [P_DAtoLO, P_DAtoJA, P_DAtoCA, P_DAtoDA, P_DAtoESP]
     
     #Matriz de probabilidades de transições de estados
-    P_MATRIZ = [P_ESPtoN, P_LOtoN, P_JAtoN, P_CAtoN, P_DAtoN]
+    P_MATRIZ = [P_LOtoN, P_JAtoN, P_CAtoN, P_DAtoN, P_ESPtoN]
     
-    print("\nProbabilidade das sílabas LO, JA, CA, DA e do ESPAÇO: \n", P_IND)
+    print("\nProbabilidades de estados iniciais: \n", P_INI)
     print("\nMatriz de probabilidades de transições de estados: \n", P_MATRIZ)
+    
+    writeList(P_MATRIZ, "matrizdeprob.txt", "w")
+    writeList(P_INI, "matrizdeprob.txt", "a")
+        
+    input("\nPressione <Enter> para sair.")
     
 if __name__=="__main__":
     main()
