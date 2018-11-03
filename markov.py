@@ -1,14 +1,4 @@
 #Trabalho sobre cadeia de Markov
-def calcPalavras(fname):
-    "Calcula o numero de palavras em um arquivo de texto."
-    infile = open(fname, "r", encoding="iso-8859-1")
-    p = 0
-    
-    for linha in infile:
-        p = p + len(linha.split())
-    
-    infile.close()
-    return p
 
 def calcStr(fname, str):
     "Calcula o numero de ocorrencia de uma String em um arquivo de texto."
@@ -43,6 +33,7 @@ def writeList(list, fname, mode):
 def main():
     #fname = input("Informe o nome do arquivo: " )
     #fname = "teste.txt"
+    #fname = "bn000013.pdf"
     fname = "Policarpo.txt"
     
     #Estado inicial
